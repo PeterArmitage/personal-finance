@@ -9,15 +9,29 @@
   external_node_modules = ["@prisma/client"]
 
 [[plugins]]
-  package = "@netlify/plugin-nextjs"
+package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+  node_bundler = "esbuild"
+  [plugins.environment]
+    NODE_OPTIONS = "--require polka --require ts-node/register"
+    NODE_ENV = "development"
 
 [build.environment]
   NODE_VERSION = "18"
   NODE_OPTIONS = "--max_old_space_size=4096"
 
-[build]
+[[build]]
   command = "npm run build"
-  publish = ".next"
+  functions = "./functions"
+  publish = "./out"
+  node_bundler = "esbuild"
+  api = "./api"
+  [build.environment]
+    DATABASE_URL = "your_database_url"
+    DATABASE_PASSWORD = "your_database_password"
+    NODE_VERSION = "your_node_version"
+  [build.processing]
+    esbuild = { externalModules = ["node-fetch", "crypto"] }
 
 [functions.timeout]
   duration = 30
