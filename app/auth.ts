@@ -1,10 +1,30 @@
-import NextAuth, { AuthOptions } from 'next-auth';
+import NextAuth, {
+	AuthOptions,
+	User,
+	Session,
+	DefaultSession,
+} from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import { compare } from 'bcrypt';
 import { z } from 'zod';
 import { CredentialsSchema } from '@/lib/schema/auth';
+import { JWT } from 'next-auth/jwt';
+
+interface ExtendedSession extends Session {
+	user: {
+		id: string;
+		email: string;
+		name: string;
+		rememberMe: boolean;
+	} & DefaultSession['user'];
+}
+
+// Extend the built-in user type
+interface ExtendedUser extends User {
+	rememberMe?: boolean;
+}
 
 export const authOptions: AuthOptions = {
 	adapter: PrismaAdapter(prisma),
@@ -15,7 +35,7 @@ export const authOptions: AuthOptions = {
 				email: { label: 'Email', type: 'text' },
 				password: { label: 'Password', type: 'password' },
 			},
-			async authorize(credentials, req) {
+			async authorize(credentials, req): Promise<ExtendedUser | null> {
 				try {
 					const { email, password } = CredentialsSchema.parse(credentials);
 					const rememberMe = req.body?.rememberMe === 'true';
@@ -61,26 +81,31 @@ export const authOptions: AuthOptions = {
 		signIn: '/auth/signin',
 	},
 	callbacks: {
-		async jwt({ token, user, account }) {
+		async jwt({
+			token,
+			user,
+			account,
+		}): Promise<JWT & { rememberMe?: boolean }> {
 			if (user) {
 				token.id = user.id;
 				token.email = user.email;
 				token.name = user.name;
-				token.rememberMe = user.rememberMe;
+				token.rememberMe = (user as ExtendedUser).rememberMe;
 			}
 			return token;
 		},
-		async session({ session, token }) {
-			session.user.id = token.id;
-			session.user.email = token.email;
-			session.user.name = token.name;
-			session.user.rememberMe = token.rememberMe;
-			return session;
+		async session({ session, token }): Promise<ExtendedSession> {
+			return {
+				...session,
+				user: {
+					...session.user,
+					id: token.id as string,
+					email: token.email as string,
+					name: token.name as string,
+					rememberMe: token.rememberMe as boolean,
+				},
+			};
 		},
 	},
 	debug: process.env.NODE_ENV === 'development',
 };
-
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
