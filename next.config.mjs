@@ -5,7 +5,6 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        crypto: false,
         fs: false,
         path: false,
       };
