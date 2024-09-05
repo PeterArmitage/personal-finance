@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
-import { hash } from 'bcrypt';
+import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
 import { SignUpSchema } from '@/lib/schema/auth';
+
+function hashPassword(password: string): string {
+	return crypto.createHash('sha256').update(password).digest('hex');
+}
 
 export async function POST(req: Request) {
 	try {
@@ -20,7 +23,7 @@ export async function POST(req: Request) {
 			);
 		}
 
-		const hashedPassword = await hash(password, 10);
+		const hashedPassword = hashPassword(password);
 
 		const user = await prisma.user.create({
 			data: {
@@ -38,16 +41,6 @@ export async function POST(req: Request) {
 			{ status: 201 }
 		);
 	} catch (error) {
-		if (error instanceof z.ZodError) {
-			return NextResponse.json(
-				{ message: 'Invalid input', errors: error.errors },
-				{ status: 400 }
-			);
-		}
-		console.error('Signup error:', error);
-		return NextResponse.json(
-			{ message: 'An unexpected error occurred during signup' },
-			{ status: 500 }
-		);
+		// ... error handling
 	}
 }

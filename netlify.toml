@@ -14,7 +14,7 @@
   external_node_modules = ["@prisma/client"]
 
 [build]
-  command = "npm run netlify-build"
+  command = "npm run build"
   publish = ".next"
 
 [functions.timeout]

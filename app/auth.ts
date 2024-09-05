@@ -1,18 +1,17 @@
-import NextAuth, {
-	AuthOptions,
-	User,
-	Session,
-	DefaultSession,
-} from 'next-auth';
-import { JWT } from 'next-auth/jwt';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaClient } from '@prisma/client';
-import { compare } from 'bcrypt';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { prisma } from '@/lib/prisma';
+import crypto from 'crypto';
+import { JWT } from 'next-auth/jwt';
+import { Session } from 'next-auth';
+import { User } from 'next-auth';
 
-const prisma = new PrismaClient();
+function hashPassword(password: string): string {
+	return crypto.createHash('sha256').update(password).digest('hex');
+}
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
 	adapter: PrismaAdapter(prisma),
 	providers: [
 		CredentialsProvider({
@@ -23,26 +22,18 @@ export const authOptions: AuthOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials?.email || !credentials?.password) {
-					throw new Error('Missing credentials');
+					return null;
 				}
-
 				const user = await prisma.user.findUnique({
 					where: { email: credentials.email },
 				});
-
 				if (!user) {
-					throw new Error('User not found');
+					return null;
 				}
-
-				const isPasswordValid = await compare(
-					credentials.password,
-					user.password
-				);
-
-				if (!isPasswordValid) {
-					throw new Error('Invalid password');
+				const hashedPassword = hashPassword(credentials.password);
+				if (hashedPassword !== user.password) {
+					return null;
 				}
-
 				return { id: user.id, email: user.email, name: user.name };
 			},
 		}),
