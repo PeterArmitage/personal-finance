@@ -5,12 +5,7 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        os: false,
-        path: false,
+        crypto: require.resolve('crypto-browserify'),
       };
     }
     return config;

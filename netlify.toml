@@ -1,5 +1,6 @@
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client"]
 
 [functions."api/*"]
   included_files = ["prisma/**"]
@@ -11,6 +12,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  NODE_OPTIONS = "--max_old_space_size=4096"
 
 [build]
   command = "npm run build"

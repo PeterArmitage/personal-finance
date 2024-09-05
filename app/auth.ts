@@ -2,13 +2,13 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
-import crypto from 'crypto';
 import { JWT } from 'next-auth/jwt';
 import { Session } from 'next-auth';
 import { User } from 'next-auth';
+import { createHash } from 'crypto';
 
 function hashPassword(password: string): string {
-	return crypto.createHash('sha256').update(password).digest('hex');
+	return createHash('sha256').update(password).digest('hex');
 }
 
 export const authOptions: NextAuthOptions = {
