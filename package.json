@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "postinstall": "prisma generate",
     "build": "next build",
+   "netlify-build": "npm run postinstall && npm run build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
