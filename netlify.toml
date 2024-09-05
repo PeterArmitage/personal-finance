@@ -16,14 +16,9 @@ package = "@netlify/plugin-nextjs"
     NODE_OPTIONS = "--require polka --require ts-node/register"
     NODE_ENV = "development"
 
-[build.environment]
-  NODE_VERSION = "18"
-  NODE_OPTIONS = "--max_old_space_size=4096"
-
-[[build]]
+[build]
   command = "npm run build"
-  functions = "./functions"
-  publish = "./out"
+  publish = ".next"
   node_bundler = "esbuild"
   api = "./api"
   [build.environment]
