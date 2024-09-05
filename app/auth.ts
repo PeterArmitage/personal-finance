@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { JWT } from 'next-auth/jwt';
 import { Session } from 'next-auth';
 import { User } from 'next-auth';
+import bcrypt from 'bcrypt';
 
 export const authOptions: NextAuthOptions = {
 	adapter: PrismaAdapter(prisma),
@@ -26,15 +27,10 @@ export const authOptions: NextAuthOptions = {
 					return null;
 				}
 
-				// Use a server-side API route for password comparison
-				const isValid = await fetch('/api/auth/compare-password', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						password: credentials.password,
-						hash: user.password,
-					}),
-				}).then((res) => res.json());
+				const isValid = await bcrypt.compare(
+					credentials.password,
+					user.password
+				);
 
 				if (!isValid) {
 					return null;
