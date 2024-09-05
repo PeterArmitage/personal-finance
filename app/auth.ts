@@ -5,7 +5,8 @@ import { prisma } from '@/lib/prisma';
 import { JWT } from 'next-auth/jwt';
 import { Session } from 'next-auth';
 import { User } from 'next-auth';
-import { createHash } from 'crypto';
+import crypto from 'crypto';
+const { createHash } = crypto;
 
 function hashPassword(password: string): string {
 	return createHash('sha256').update(password).digest('hex');
