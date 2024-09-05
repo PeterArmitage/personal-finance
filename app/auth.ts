@@ -5,12 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { JWT } from 'next-auth/jwt';
 import { Session } from 'next-auth';
 import { User } from 'next-auth';
-import crypto from 'crypto';
-const { createHash } = crypto;
-
-function hashPassword(password: string): string {
-	return createHash('sha256').update(password).digest('hex');
-}
+import { compare } from 'bcrypt';
 
 export const authOptions: NextAuthOptions = {
 	adapter: PrismaAdapter(prisma),
@@ -31,8 +26,11 @@ export const authOptions: NextAuthOptions = {
 				if (!user) {
 					return null;
 				}
-				const hashedPassword = hashPassword(credentials.password);
-				if (hashedPassword !== user.password) {
+				const isPasswordValid = await compare(
+					credentials.password,
+					user.password
+				);
+				if (!isPasswordValid) {
 					return null;
 				}
 				return { id: user.id, email: user.email, name: user.name };
