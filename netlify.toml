@@ -1,6 +1,7 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["@prisma/client"]
+  timeout = 30
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -16,6 +17,3 @@
 [build]
   command = "npm run build"
   publish = ".next"
-
-[functions]
-  timeout = 30
