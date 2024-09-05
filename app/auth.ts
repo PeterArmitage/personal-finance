@@ -45,12 +45,14 @@ export const authOptions: AuthOptions = {
 					});
 
 					if (!user) {
+						console.error('User not found:', email);
 						return null;
 					}
 
 					const isPasswordValid = await compare(password, user.password);
 
 					if (!isPasswordValid) {
+						console.error('Invalid password for user:', email);
 						return null;
 					}
 
@@ -63,6 +65,8 @@ export const authOptions: AuthOptions = {
 				} catch (error) {
 					if (error instanceof z.ZodError) {
 						console.error('Validation error:', error.errors);
+					} else {
+						console.error('Authorization error:', error);
 					}
 					return null;
 				}

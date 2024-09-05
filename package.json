@@ -6,11 +6,9 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "build": "next build",
-   "netlify-build": "npm run postinstall && npm run build",
+    "netlify-build": "npm run postinstall && npm run build",
     "start": "next start",
-    "lint": "next lint",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
