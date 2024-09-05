@@ -8,7 +8,7 @@
   node_bundler = "esbuild"
   external_node_modules = ["@prisma/client"]
 
-[[plugins]]
+[plugins]
 package = "@netlify/plugin-nextjs"
   [plugins.inputs]
   node_bundler = "esbuild"
