@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ThemeSwitch } from '../../components/theme-switch';
+
 import { signUpSchema } from '@/lib/validations/auth';
 import { ZodError } from 'zod';
 
@@ -67,7 +67,6 @@ export default function SignUp() {
 
 	return (
 		<div className='min-h-screen flex flex-col items-center justify-center bg-background text-foreground'>
-			<ThemeSwitch />
 			<Card className='w-[350px]'>
 				<CardHeader>
 					<CardTitle>Sign Up</CardTitle>
