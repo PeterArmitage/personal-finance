@@ -4,27 +4,13 @@ import NextAuth, {
 	Session,
 	DefaultSession,
 } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
 import { compare } from 'bcrypt';
-import { z } from 'zod';
-import { CredentialsSchema } from '@/lib/schema/auth';
-import { JWT } from 'next-auth/jwt';
 
-interface ExtendedSession extends Session {
-	user: {
-		id: string;
-		email: string;
-		name: string;
-		rememberMe: boolean;
-	} & DefaultSession['user'];
-}
-
-// Extend the built-in user type
-interface ExtendedUser extends User {
-	rememberMe?: boolean;
-}
+const prisma = new PrismaClient();
 
 export const authOptions: AuthOptions = {
 	adapter: PrismaAdapter(prisma),
@@ -35,81 +21,49 @@ export const authOptions: AuthOptions = {
 				email: { label: 'Email', type: 'text' },
 				password: { label: 'Password', type: 'password' },
 			},
-			async authorize(credentials, req): Promise<ExtendedUser | null> {
-				try {
-					const { email, password } = CredentialsSchema.parse(credentials);
-					const rememberMe = req.body?.rememberMe === 'true';
-
-					const user = await prisma.user.findUnique({
-						where: { email },
-					});
-
-					if (!user) {
-						console.error('User not found:', email);
-						return null;
-					}
-
-					const isPasswordValid = await compare(password, user.password);
-
-					if (!isPasswordValid) {
-						console.error('Invalid password for user:', email);
-						return null;
-					}
-
-					return {
-						id: user.id,
-						email: user.email,
-						name: user.name,
-						rememberMe,
-					};
-				} catch (error) {
-					if (error instanceof z.ZodError) {
-						console.error('Validation error:', error.errors);
-					} else {
-						console.error('Authorization error:', error);
-					}
-					return null;
+			async authorize(credentials) {
+				if (!credentials?.email || !credentials?.password) {
+					throw new Error('Missing credentials');
 				}
+
+				const user = await prisma.user.findUnique({
+					where: { email: credentials.email },
+				});
+
+				if (!user) {
+					throw new Error('User not found');
+				}
+
+				const isPasswordValid = await compare(
+					credentials.password,
+					user.password
+				);
+
+				if (!isPasswordValid) {
+					throw new Error('Invalid password');
+				}
+
+				return { id: user.id, email: user.email, name: user.name };
 			},
 		}),
 	],
-	session: {
-		strategy: 'jwt',
-	},
-	jwt: {
-		secret: process.env.NEXTAUTH_SECRET,
-		maxAge: 60 * 60 * 24 * 30, // 30 days
-	},
-	secret: process.env.NEXTAUTH_SECRET,
-	pages: {
-		signIn: '/auth/signin',
-	},
+	session: { strategy: 'jwt' },
 	callbacks: {
-		async jwt({
-			token,
-			user,
-			account,
-		}): Promise<JWT & { rememberMe?: boolean }> {
+		async jwt({ token, user }: { token: JWT; user?: User }) {
 			if (user) {
 				token.id = user.id;
-				token.email = user.email;
-				token.name = user.name;
-				token.rememberMe = (user as ExtendedUser).rememberMe;
 			}
 			return token;
 		},
-		async session({ session, token }): Promise<ExtendedSession> {
-			return {
-				...session,
-				user: {
-					...session.user,
-					id: token.id as string,
-					email: token.email as string,
-					name: token.name as string,
-					rememberMe: token.rememberMe as boolean,
-				},
-			};
+		async session({ session, token }: { session: Session; token: JWT }) {
+			if (session.user) {
+				(session.user as any).id = token.id as string;
+			}
+			return session;
 		},
+	},
+	pages: {
+		signIn: '/auth/signin',
 	},
 	debug: process.env.NODE_ENV === 'development',
 };
