@@ -1,5 +1,9 @@
 [functions]
   node_bundler = "esbuild"
+
+[functions."api/*"]
+  included_files = ["prisma/**"]
+  node_bundler = "esbuild"
   external_node_modules = ["@prisma/client"]
 
 [[plugins]]
@@ -7,11 +11,6 @@
 
 [build.environment]
   NODE_VERSION = "18"
-
-[functions."api/*"]
-  included_files = ["prisma/**"]
-  node_bundler = "esbuild"
-  external_node_modules = ["@prisma/client"]
 
 [build]
   command = "npm run build"
