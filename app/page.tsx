@@ -1,5 +1,12 @@
 import Link from 'next/link';
 import { ThemeSwitch } from './components/theme-switch';
+import Head from 'next/head';
+
+export const metadata = {
+	title: 'Personal Finance Tracker',
+	description:
+		'Take control of your finances with our easy-to-use tracking and budgeting tools.',
+};
 
 export default function Home() {
 	return (

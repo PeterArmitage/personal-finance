@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 import { Budget } from '@/types/index';
 import { Goal } from '@/types/index';
-
+import { Skeleton } from '../../components/Skeleton';
 // Mock data for visualization
 const mockBudgets: Budget[] = [
 	{ id: '1', category: 'Food', amount: 500 },
@@ -69,7 +69,17 @@ export default function BudgetPage() {
 	}, []);
 
 	if (status === 'loading') {
-		return <div>Loading...</div>;
+		return (
+			<div className='container mx-auto p-4'>
+				<Skeleton className='h-8 w-1/2 mb-4' />
+				<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+					<Skeleton className='h-[300px]' />
+					<Skeleton className='h-[300px]' />
+				</div>
+				<Skeleton className='h-[200px] mt-6' />
+				<Skeleton className='h-[200px] mt-6' />
+			</div>
+		);
 	}
 
 	if (!session) {
@@ -80,7 +90,7 @@ export default function BudgetPage() {
 	return (
 		<div className='container mx-auto p-4'>
 			<h1 className='text-2xl font-bold mb-4'>Budget Planning</h1>
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
 				<Card>
 					<CardHeader>
 						<CardTitle>Add New Budget</CardTitle>
@@ -146,7 +156,7 @@ export default function BudgetPage() {
 					</ul>
 				</CardContent>
 			</Card>
-			<Card>
+			<Card className='col-span-1 mt-6'>
 				<CardHeader>
 					<CardTitle>Related Goals</CardTitle>
 				</CardHeader>

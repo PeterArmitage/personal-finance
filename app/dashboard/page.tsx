@@ -39,10 +39,9 @@ export default function Dashboard() {
 	}
 
 	return (
-		<div className='container mx-auto p-4  bg-gradient-light dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-blue-900'>
-			<h1 className='text-2xl font-bold mb-4'>Welcome, {session.user?.name}</h1>
-
-			<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
+		<div className='flex flex-col h-full space-y-6 '>
+			<h1 className='text-2xl font-bold'>Dashboard</h1>
+			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
 				<Card>
 					<CardHeader>
 						<CardTitle>Total Income</CardTitle>
@@ -75,20 +74,23 @@ export default function Dashboard() {
 				</Card>
 			</div>
 
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 				<Card>
 					<CardHeader>
 						<CardTitle>Recent Transactions</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<ul>
+						<ul className='space-y-2'>
 							{dashboardData?.recentTransactions.map((transaction) => (
-								<li key={transaction.id} className='mb-2'>
+								<li
+									key={transaction.id}
+									className='flex justify-between items-center'
+								>
 									<span className='font-semibold'>
 										{transaction.description}
 									</span>
 									<span
-										className={`float-right ${
+										className={`${
 											transaction.amount >= 0
 												? 'text-green-500'
 												: 'text-red-500'
