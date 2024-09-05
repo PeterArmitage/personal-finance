@@ -24,3 +24,17 @@ export const DashboardResponseSchema = z.object({
 		})
 	),
 });
+
+export const GoalSchema = z.object({
+	name: z.string().min(1),
+	category: z.string().min(1),
+	targetAmount: z.number().positive(),
+	deadline: z.string().refine((date) => !isNaN(Date.parse(date)), {
+		message: 'Invalid date format',
+	}),
+});
+
+export const UpdateGoalSchema = z.object({
+	id: z.string(),
+	currentAmount: z.number().min(0),
+});

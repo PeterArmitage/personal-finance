@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ThemeSwitch } from '../../components/theme-switch';
 import { signInSchema } from '@/lib/validations/auth';
 import { ZodError } from 'zod';
 
@@ -15,6 +14,7 @@ export default function SignIn() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
+	const [rememberMe, setRememberMe] = useState(false);
 	const router = useRouter();
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -30,6 +30,7 @@ export default function SignIn() {
 				redirect: false, // Prevent automatic redirect
 				email,
 				password,
+				rememberMe,
 			});
 
 			if (result?.error) {
@@ -51,7 +52,6 @@ export default function SignIn() {
 
 	return (
 		<div className='min-h-screen flex flex-col items-center justify-center bg-background text-foreground'>
-			<ThemeSwitch />
 			<Card className='w-[350px]'>
 				<CardHeader>
 					<CardTitle>Sign In</CardTitle>
@@ -78,6 +78,17 @@ export default function SignIn() {
 									onChange={(e) => setPassword(e.target.value)}
 									required
 								/>
+							</div>
+							<div className='flex items-center space-x-2 mt-4'>
+								<input
+									type='checkbox'
+									id='remember'
+									className='h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500'
+									onChange={(e) => setRememberMe(e.target.checked)}
+								/>
+								<label htmlFor='remember' className='text-sm text-gray-600'>
+									Remember me
+								</label>
 							</div>
 						</div>
 						{error && <p className='text-red-500 mt-2'>{error}</p>}

@@ -9,6 +9,7 @@ export const authOptions: NextAuthOptions = {
 	secret: process.env.NEXTAUTH_SECRET,
 	session: {
 		strategy: 'jwt',
+		maxAge: 30 * 24 * 60 * 60, // 30 days
 	},
 	providers: [
 		CredentialsProvider({
@@ -45,24 +46,29 @@ export const authOptions: NextAuthOptions = {
 		}),
 	],
 	callbacks: {
+		jwt: ({ token, user, account }) => {
+			if (user) {
+				const u = user as unknown as any;
+				return {
+					...token,
+					id: u.id,
+					rememberMe: u.rememberMe,
+				};
+			}
+			if (account) {
+				token.rememberMe = account.rememberMe;
+			}
+			return token;
+		},
 		session: ({ session, token }) => {
 			return {
 				...session,
 				user: {
 					...session.user,
 					id: token.id,
+					rememberMe: token.rememberMe,
 				},
 			};
-		},
-		jwt: ({ token, user }) => {
-			if (user) {
-				const u = user as unknown as any;
-				return {
-					...token,
-					id: u.id,
-				};
-			}
-			return token;
 		},
 	},
 };

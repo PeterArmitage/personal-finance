@@ -15,12 +15,8 @@ import {
 	Tooltip,
 	ResponsiveContainer,
 } from 'recharts';
-
-interface Budget {
-	id: string;
-	category: string;
-	amount: number;
-}
+import { Budget } from '@/types/index';
+import { Goal } from '@/types/index';
 
 // Mock data for visualization
 const mockBudgets: Budget[] = [
@@ -38,6 +34,7 @@ export default function BudgetPage() {
 	const [error, setError] = useState('');
 	const router = useRouter();
 	const { data: session, status } = useSession();
+	const [goals, setGoals] = useState<Goal[]>([]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -59,6 +56,17 @@ export default function BudgetPage() {
 		setNewCategory('');
 		setNewAmount('');
 	};
+
+	useEffect(() => {
+		const fetchGoals = async () => {
+			const response = await fetch('/api/goals');
+			if (response.ok) {
+				const data = await response.json();
+				setGoals(data);
+			}
+		};
+		fetchGoals();
+	}, []);
 
 	if (status === 'loading') {
 		return <div>Loading...</div>;
@@ -133,6 +141,28 @@ export default function BudgetPage() {
 							<li key={budget.id} className='mb-2'>
 								<span className='font-semibold'>{budget.category}</span>
 								<span className='float-right'>${budget.amount.toFixed(2)}</span>
+							</li>
+						))}
+					</ul>
+				</CardContent>
+			</Card>
+			<Card>
+				<CardHeader>
+					<CardTitle>Related Goals</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<ul>
+						{goals.map((goal) => (
+							<li key={goal.id} className='mb-2'>
+								<span className='font-semibold'>{goal.name}</span>
+								<span className='float-right'>
+									${goal.targetAmount.toFixed(2)}
+								</span>
+								<progress
+									value={goal.currentAmount}
+									max={goal.targetAmount}
+									className='w-full'
+								></progress>
 							</li>
 						))}
 					</ul>

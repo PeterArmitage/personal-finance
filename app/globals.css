@@ -29,15 +29,19 @@
 		--chart-3: 197 37% 24%;
 		--chart-4: 43 74% 66%;
 		--chart-5: 27 87% 67%;
-		--gradient-light-from: theme('colors.blue.400');
-		--gradient-light-to: theme('colors.indigo.300');
-		--gradient-dark-from: theme('colors.gray.900');
-		--gradient-dark-to: theme('colors.purple.900');
+		--gradient-light-from: theme('colors.gray.200');
+		--gradient-light-via-1: theme('colors.gray.100');
+		--gradient-light-via-2: theme('colors.gray.200');
+		--gradient-light-to: theme('colors.amber.200');
 		--gradient-light: linear-gradient(
 			to bottom right,
 			var(--gradient-light-from),
+			var(--gradient-light-via-1),
+			var(--gradient-light-via-2),
 			var(--gradient-light-to)
 		);
+		--gradient-dark-from: theme('colors.gray.900');
+		--gradient-dark-to: theme('colors.purple.900');
 		--gradient-dark: linear-gradient(
 			to bottom right,
 			var(--gradient-dark-from),

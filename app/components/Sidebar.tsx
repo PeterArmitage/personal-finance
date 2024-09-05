@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
 	};
 
 	return (
-		<nav className='w-64  bg-gradient-light dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-blue-900-800 p-4 flex flex-col h-screen'>
+		<nav className='w-64 bg-gradient-light dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-blue-900-800 p-4 flex flex-col min-h-screen'>
 			<ThemeSwitch />
 			<ul className='flex-grow space-y-2'>
 				<li>
@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
 					</Link>
 				</li>
 			</ul>
-			<div className='mt-auto space-y-4'>
+			<div className='mt-auto'>
 				<button
 					onClick={handleSignOut}
 					className='w-full bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded'

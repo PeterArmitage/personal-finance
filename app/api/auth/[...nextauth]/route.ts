@@ -15,9 +15,10 @@ export const authOptions: AuthOptions = {
 				email: { label: 'Email', type: 'text' },
 				password: { label: 'Password', type: 'password' },
 			},
-			async authorize(credentials) {
+			async authorize(credentials, req) {
 				try {
 					const { email, password } = CredentialsSchema.parse(credentials);
+					const rememberMe = req.body?.rememberMe === 'true';
 
 					const user = await prisma.user.findUnique({
 						where: { email },
@@ -37,6 +38,7 @@ export const authOptions: AuthOptions = {
 						id: user.id,
 						email: user.email,
 						name: user.name,
+						rememberMe,
 					};
 				} catch (error) {
 					if (error instanceof z.ZodError) {
