@@ -1,0 +1,23 @@
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client"]
+  included_files = ["node_modules/bcrypt/**"]
+
+[functions."api/*"]
+  included_files = ["prisma/**"]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client"]
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NODE_OPTIONS = "--max_old_space_size=4096"
+
+[functions.timeout]
+  duration = 30
