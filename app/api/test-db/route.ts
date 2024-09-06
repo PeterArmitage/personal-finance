@@ -3,9 +3,6 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
 	try {
-		await prisma.$connect();
-		console.log('Connected to database');
-
 		const userCount = await prisma.user.count();
 		console.log(`Number of users in database: ${userCount}`);
 

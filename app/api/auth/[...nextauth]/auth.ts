@@ -17,6 +17,7 @@ export const authOptions: NextAuthOptions = {
 				password: { label: 'Password', type: 'password' },
 			},
 			async authorize(credentials) {
+				console.log('Authorize function called');
 				if (!credentials?.email || !credentials?.password) {
 					console.error('Missing credentials');
 					return null;
@@ -25,6 +26,7 @@ export const authOptions: NextAuthOptions = {
 					const user = await prisma.user.findUnique({
 						where: { email: credentials.email },
 					});
+					console.log('User found:', user ? 'Yes' : 'No');
 					if (!user) {
 						console.error('User not found');
 						return null;
@@ -42,7 +44,7 @@ export const authOptions: NextAuthOptions = {
 					console.log('Authentication successful for user:', user.email);
 					return { id: user.id, email: user.email, name: user.name };
 				} catch (error) {
-					console.error('Authorization error:', error);
+					console.error('Detailed auth error:', error);
 					return null;
 				}
 			},

@@ -17,7 +17,7 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-command = "npm install --production=false && npm run build"
+command = "npm install --production=false && npx prisma generate && npm run build"
      publish = ".next"
 
 [build.environment]
