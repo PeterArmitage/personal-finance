@@ -18,24 +18,33 @@ export const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials?.email || !credentials?.password) {
+					console.error('Missing credentials');
 					return null;
 				}
-				const user = await prisma.user.findUnique({
-					where: { email: credentials.email },
-				});
-				if (!user) {
-					return null;
-				}
+				try {
+					const user = await prisma.user.findUnique({
+						where: { email: credentials.email },
+					});
+					if (!user) {
+						console.error('User not found');
+						return null;
+					}
 
-				const isValid = await bcrypt.compare(
-					credentials.password,
-					user.password
-				);
+					const isValid = await bcrypt.compare(
+						credentials.password,
+						user.password
+					);
 
-				if (!isValid) {
+					if (!isValid) {
+						console.error('Invalid password');
+						return null;
+					}
+					console.log('Authentication successful for user:', user.email);
+					return { id: user.id, email: user.email, name: user.name };
+				} catch (error) {
+					console.error('Authorization error:', error);
 					return null;
 				}
-				return { id: user.id, email: user.email, name: user.name };
 			},
 		}),
 	],
