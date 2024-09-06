@@ -20,4 +20,4 @@ command = "npm install --production=false && npm run build"
   NODE_OPTIONS = "--max_old_space_size=4096"
 
 [functions.timeout]
-  duration = 30
+  duration = 60

@@ -48,6 +48,7 @@ export const authOptions: NextAuthOptions = {
 			},
 		}),
 	],
+	secret: process.env.NEXTAUTH_SECRET,
 	session: { strategy: 'jwt' },
 	callbacks: {
 		async jwt({ token, user }: { token: JWT; user?: User }) {
@@ -66,5 +67,4 @@ export const authOptions: NextAuthOptions = {
 	pages: {
 		signIn: '/auth/signin',
 	},
-	debug: process.env.NODE_ENV === 'development',
 };
