@@ -13,6 +13,14 @@ const nextConfig = {
     }
     return config;
   },
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+  },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  },
 };
 
 export default nextConfig;

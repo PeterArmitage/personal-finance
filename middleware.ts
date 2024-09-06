@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-export function middleware(request: NextRequest) {
+export async function middleware(req: NextRequest) {
+	const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+	if (!token && req.nextUrl.pathname.startsWith('/dashboard')) {
+		return NextResponse.redirect(new URL('/auth/signin', req.url));
+	}
+
 	const response = NextResponse.next();
 
 	// CORS headers
@@ -26,13 +33,8 @@ export function middleware(request: NextRequest) {
 // Optional: Configure which routes use this middleware
 export const config = {
 	matcher: [
-		/*
-		 * Match all request paths except for the ones starting with:
-		 * - api (API routes)
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico (favicon file)
-		 */
+		'/dashboard/:path*',
+		'/api/auth/:path*',
 		'/((?!api|_next/static|_next/image|favicon.ico).*)',
 	],
 };
